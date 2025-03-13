@@ -125,7 +125,7 @@
             console.log("Characteristic discovered:", characteristic.uuid);
             sensorCharacteristicFound = characteristic;
             characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
-            characteristic.startNotifications();
+           // characteristic.startNotifications();
             console.log("Notifications Started.");
             return characteristic.readValue();
         })
