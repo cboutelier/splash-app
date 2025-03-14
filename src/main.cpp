@@ -35,9 +35,10 @@ class MyServerCallbacks: public BLEServerCallbacks {
 
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic* pLedCharacteristic, esp_ble_gatts_cb_param_t* param){
-   Serial.print("OnWrite ");
+   Serial.print("====> OnWrite ");
+   //Serial.println(pLedCharacteristic->getValue());
   
-    String value = String(pLedCharacteristic->getValue().c_str());
+    std::string value = pLedCharacteristic->getValue();
     if (value.length() > 0) {
       Serial.print("Characteristic event, written: ");
       Serial.println(static_cast<int>(value[0])); // Print the integer value
@@ -51,23 +52,6 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
     }
     
   }
-
-  void onNotify(BLECharacteristic* pLedCharacteristic) {
-    Serial.print("OnNotify ");
-   
- /*  String value = String(pLedCharacteristic->getValue().c_str());
-     if (value.length() > 0) {
-       Serial.print("Characteristic event, written: ");
-       Serial.println(static_cast<int>(value[0])); // Print the integer value
- 
-       int receivedValue = static_cast<int>(value[0]);
-       if (receivedValue == 1) {
-         digitalWrite(ledPin, HIGH);
-       } else {
-         digitalWrite(ledPin, LOW);
-       }
-     }*/
-   }
 };
 
 void setup() {
@@ -124,13 +108,13 @@ void setup() {
 void loop() {
   // notify changed value
   if (deviceConnected) {
-   /* pSensorCharacteristic->setValue(String(value).c_str());
+    pSensorCharacteristic->setValue(String(value).c_str());
     pSensorCharacteristic->notify();
     value++;
     Serial.print("New value notified: ");
     Serial.println(value);
-    */
-    //delay(3000); // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
+   
+    delay(3000); // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
   }
   // disconnecting
   if (!deviceConnected && oldDeviceConnected) {
