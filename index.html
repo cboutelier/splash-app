@@ -62,8 +62,8 @@
 
     //Define BLE Device Specs
     var deviceName ='SPLASH';
-    var bleService = '5d898c34-12aa-4af5-8adc-0b105f04b528';
-    var ledCharacteristic = 'db8d3ab6-9cdb-4159-aac6-ab155aabaa71';
+    var bleService =          '5d898c34-12aa-4af5-8adc-0b105f04b528';
+    var ledCharacteristic =   'db8d3ab6-9cdb-4159-aac6-ab155aabaa71';
     var sensorCharacteristic= '4add5085-9905-4a7b-8800-032e7db97f32';
 
     
@@ -160,7 +160,8 @@
             bleServiceFound.getCharacteristic(ledCharacteristic)
             .then(characteristic => {
                 console.log("Found the LED characteristic: ", characteristic.uuid);
-                const data = new Uint8Array([value]);
+                //const data = new Uint8Array([value]);
+                const data = ""+value;
                 return characteristic.writeValue(data);
             })
             .then(() => {
