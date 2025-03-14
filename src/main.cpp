@@ -6,6 +6,8 @@
 #include <BLE2902.h>
 
 
+
+
 BLEServer* pServer = NULL;
 BLECharacteristic* pSensorCharacteristic = NULL;
 BLECharacteristic* pLedCharacteristic = NULL;
@@ -71,7 +73,9 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
 void setup() {
   Serial.begin(115200);
   pinMode(ledPin, OUTPUT);
-
+  Serial.setDebugOutput(true);
+  esp_log_level_set("*", ESP_LOG_VERBOSE); // Activer les logs de débogage
+  log_d("SETUP", ">> creating the device");
   // Create the BLE Device
   BLEDevice::init("SPLASH");
 
