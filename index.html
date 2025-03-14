@@ -161,7 +161,7 @@
             .then(characteristic => {
                 console.log("Found the LED characteristic: ", characteristic.uuid);
                 //const data = new Uint8Array([value]);
-                const data = ""+value;
+                 const data = Uint8Array.of(1);
                 return characteristic.writeValue(data);
             })
             .then(() => {
