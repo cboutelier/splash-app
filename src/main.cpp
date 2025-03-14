@@ -35,9 +35,8 @@ class MyServerCallbacks: public BLEServerCallbacks {
 
 class MyCharacteristicCallbacks : public BLECharacteristicCallbacks {
   void onWrite(BLECharacteristic* pLedCharacteristic, esp_ble_gatts_cb_param_t* param){
-   Serial.print("====> OnWrite ");
-   //Serial.println(pLedCharacteristic->getValue());
-  
+ 
+   
     std::string value = pLedCharacteristic->getValue();
     if (value.length() > 0) {
       Serial.print("Characteristic event, written: ");
@@ -58,8 +57,8 @@ void setup() {
   Serial.begin(115200);
   pinMode(ledPin, OUTPUT);
   Serial.setDebugOutput(true);
-  esp_log_level_set("*", ESP_LOG_VERBOSE); // Activer les logs de débogage
-  log_d("SETUP", ">> creating the device");
+  //esp_log_level_set("*", ESP_LOG_VERBOSE); // Activer les logs de débogage
+  
   // Create the BLE Device
   BLEDevice::init("SPLASH");
 
