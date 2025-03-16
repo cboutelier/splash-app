@@ -45,6 +45,7 @@
             <div class="card">
                 <h2>Height (mm)</h2>
                 <p class="reading"><input id="heightId"></input></p>
+                <p class="gray-label">Timing: <span id="timing"></span></p>
                 <button id="submitHeight" class="onButton">Submit</button>
       
             </div>
@@ -190,7 +191,7 @@
     }
 
     function sendHeight(){
-        console.Log(" Sending height: ", height.value);
+        console.log(" Sending height: ", height.value);
     }
 
     function disconnectDevice() {
