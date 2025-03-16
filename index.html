@@ -45,6 +45,7 @@
             <div class="card">
                 <h2>Height (mm)</h2>
                 <p class="reading"><input id="heightId"></input></p>
+                <button id="submitHeight" class="onButton">Submit</button>
       
             </div>
 
@@ -64,6 +65,8 @@
     const latestValueSent = document.getElementById('valueSent');
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
+
+    const onSubmitHeightButton = document.getElementById('submitHeight');
 
     const height = document.getElementById('heightId');
 
@@ -94,6 +97,7 @@
     // Write to the ESP32 LED Characteristic
     onButton.addEventListener('click', () => writeOnCharacteristic(1));
     offButton.addEventListener('click', () => writeOnCharacteristic(0));
+    onSubmitHeightButton.addEventListener('click', ()=> sendHeight());
 
     // Check if BLE is available in your Browser
     function isWebBluetoothEnabled() {
@@ -183,6 +187,10 @@
             console.error ("Bluetooth is not connected. Cannot write to characteristic.")
             window.alert("Bluetooth is not connected. Cannot write to characteristic. \n Connect to BLE first!")
         }
+    }
+
+    function sendHeight(){
+        console.Log(" Sending height: ", height.value);
     }
 
     function disconnectDevice() {
