@@ -7,9 +7,13 @@
 
 #include <FastLED.h>
 
+#include <Preferences.h>
+
 BLEServer *pServer = NULL;
 BLECharacteristic *pSensorCharacteristic = NULL;
 BLECharacteristic *pLedCharacteristic = NULL;
+BLECharacteristic *pTestCommandCharacteristic = NULL;
+BLECharacteristic *pSetupCommandCharacteristic = NULL;
 bool deviceConnected = false;
 bool oldDeviceConnected = false;
 uint32_t value = 0;
@@ -22,6 +26,8 @@ const int rgbPin = GPIO_NUM_26;
 
 bool ready = true;
 uint flashDelay = 480;
+float height = 1.440;
+int offset = -150;
 
 #define COLOR_ORDER GRB
 #define CHIPSET WS2811
@@ -37,6 +43,10 @@ portMUX_TYPE mutex = portMUX_INITIALIZER_UNLOCKED;
 #define SERVICE_UUID "5d898c34-12aa-4af5-8adc-0b105f04b528"
 #define SENSOR_CHARACTERISTIC_UUID "db8d3ab6-9cdb-4159-aac6-ab155aabaa71"
 #define LED_CHARACTERISTIC_UUID "4add5085-9905-4a7b-8800-032e7db97f32"
+#define TEST_COMMANDS_UUID "4efed56f-8df2-4153-abf2-9aa6c2295752"
+#define SETUP_UUID "da5d71ce-ece4-4321-9798-1fa3a5614860"
+
+Preferences preferences;
 
 static void FlashFireTask(void *pvParameters)
 {
@@ -85,8 +95,11 @@ static void SensorTriggeredTask(void *pvParameters)
       }
       FastLED.show();
       xTaskNotify(task_camera_fire, 0, eSetValueWithOverwrite);
-
-      delay(flashDelay);
+      float fCalculatedDelay = sqrt(2 * (height) / 9.81);
+      uint32_t calculatedDelay = (uint32_t)(fCalculatedDelay * 1000) + offset;
+      Serial.println(calculatedDelay);
+      // ESP_LOGI("TAG", "Calculated delay: %lu", calculatedDelay*1000);
+      delay(calculatedDelay);
       xTaskNotify(task_flash_fire, 0, eSetValueWithOverwrite);
     }
   }
@@ -146,6 +159,55 @@ class MyCharacteristicCallbacks : public BLECharacteristicCallbacks
   }
 };
 
+class TestCharacteristicCallbacks : public BLECharacteristicCallbacks
+{
+  void onWrite(BLECharacteristic *pTestCommandCharacteristic, esp_ble_gatts_cb_param_t *param)
+  {
+    Serial.println("OnWrite");
+    std::string value = pTestCommandCharacteristic->getValue();
+    Serial.print("Length: ");
+    Serial.println(value.length());
+    if (value.length() == 2)
+    {
+      Serial.print("Characteristic event, written: ");
+      Serial.println(static_cast<int>(value[0])); // Print the integer value
+
+      int flashCommand = static_cast<int>(value[0]);
+      if (flashCommand == 1)
+      {
+        xTaskNotify(task_flash_fire, 0, eSetValueWithOverwrite);
+      }
+
+      int cameraCommand = static_cast<int>(value[1]);
+      if (cameraCommand == 1)
+      {
+        xTaskNotify(task_camera_fire, 0, eSetValueWithOverwrite);
+      }
+    }
+  }
+};
+
+class SetupCharacteristicCallbacks : public BLECharacteristicCallbacks
+{
+  void onWrite(BLECharacteristic *pSetupCommandCharacteristic, esp_ble_gatts_cb_param_t *param)
+  {
+
+    std::string value = pSetupCommandCharacteristic->getValue();
+    std::string submittedHeight = value.substr(0, value.find_first_of("#"));
+    std::string submittedOffset = value.substr(value.find_first_of("#") + 1);
+    Serial.println(String("Submitted Height:") + String(submittedHeight.c_str()));
+    Serial.println(String("Submitted offset:") + String(submittedOffset.c_str()));
+
+    height = std::stod(submittedHeight)/1000;
+    offset = std::stoi(submittedOffset);
+
+    preferences.begin("splash", false);
+    preferences.putDouble("HEIGHT", height);
+    preferences.putInt("OFFSET", offset);
+    preferences.end();
+  }
+};
+
 void onSensorTriggered()
 {
   xTaskNotify(task_sensor_triggered, 0, eSetValueWithOverwrite);
@@ -163,6 +225,11 @@ void setup()
   digitalWrite(flashPin, LOW);
   digitalWrite(cameraPin, LOW);
   Serial.setDebugOutput(true);
+
+  preferences.begin("splash", false);
+  height = preferences.getDouble("HEIGHT", 0.80);
+  offset = preferences.getInt("OFFSET", -25);
+  preferences.end();
 
   FastLED.addLeds<WS2812, rgbPin, GRB>(leds, NUM_LEDS);
   FastLED.setBrightness(BRIGHTNESS);
@@ -194,14 +261,31 @@ void setup()
       LED_CHARACTERISTIC_UUID,
       BLECharacteristic::PROPERTY_WRITE);
 
+  // Create the test characteristic
+  pTestCommandCharacteristic = pService->createCharacteristic(
+      TEST_COMMANDS_UUID,
+      BLECharacteristic::PROPERTY_WRITE);
+
+  // Create a setup characteristic
+  pSetupCommandCharacteristic = pService->createCharacteristic(SETUP_UUID,
+                                                               BLECharacteristic::PROPERTY_READ |
+                                                                   BLECharacteristic::PROPERTY_WRITE |
+                                                                   BLECharacteristic::PROPERTY_NOTIFY |
+                                                                   BLECharacteristic::PROPERTY_INDICATE);
+
   // Register the callback for the ON button characteristic
   pLedCharacteristic->setCallbacks(new MyCharacteristicCallbacks());
+
+  pTestCommandCharacteristic->setCallbacks(new TestCharacteristicCallbacks());
+
+  pSetupCommandCharacteristic->setCallbacks(new SetupCharacteristicCallbacks());
 
   // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
   // Create a BLE Descriptor
   pSensorCharacteristic->addDescriptor(new BLE2902());
   pLedCharacteristic->addDescriptor(new BLE2902());
-
+  pTestCommandCharacteristic->addDescriptor(new BLE2902());
+  pSetupCommandCharacteristic->addDescriptor(new BLE2902());
   // Start the service
   pService->start();
 
@@ -247,6 +331,10 @@ void loop()
   // notify changed value
   if (deviceConnected)
   {
+    String currentValues = String(height * 1000) + "#" + String(offset);
+    pSetupCommandCharacteristic->setValue(currentValues.c_str());
+    pSetupCommandCharacteristic->notify();
+    delay(1000);
     /*pSensorCharacteristic->setValue(String(value).c_str());
      pSensorCharacteristic->notify();
      value++;
