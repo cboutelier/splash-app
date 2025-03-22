@@ -35,7 +35,7 @@
         <div class="card-grid">
             
             <div class="card">
-                <h2>Test 1</h2>
+                <h2>Test 2</h2>
                 <button id="testCamera" class="onButton">Camera</button>
                 <button id="testFlash" class="offButton">Flash</button>
             </div>
@@ -172,9 +172,9 @@
                 .then(characteristic => {
                     console.log("Found the test command characteristic: ", characteristic.uuid, value);
                     const encoder = new TextEncoder();
-                    var  data = Uint8Array([0,1]);
+                    var  data = new Uint8Array([0,1]);
                     if( value == '10'){
-                        data = Uint8Array([1,0]);
+                        data = new Uint8Array([1,0]);
                     }
                     
                     return characteristic.writeValue(data);
