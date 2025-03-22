@@ -124,6 +124,10 @@ class MyServerCallbacks : public BLEServerCallbacks
     deviceConnected = true;
     leds[0] = CRGB::Blue;
     FastLED.show();
+
+    String currentValues = String(height * 1000) + "#" + String(offset);
+    pSetupCommandCharacteristic->setValue(currentValues.c_str());
+    pSetupCommandCharacteristic->notify();
   };
 
   void onDisconnect(BLEServer *pServer)
@@ -331,10 +335,11 @@ void loop()
   // notify changed value
   if (deviceConnected)
   {
-    String currentValues = String(height * 1000) + "#" + String(offset);
+   /* String currentValues = String(height * 1000) + "#" + String(offset);
     pSetupCommandCharacteristic->setValue(currentValues.c_str());
     pSetupCommandCharacteristic->notify();
     delay(1000);
+    */
     /*pSensorCharacteristic->setValue(String(value).c_str());
      pSensorCharacteristic->notify();
      value++;
