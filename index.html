@@ -208,11 +208,11 @@
                     return characteristic.writeValue(parameters);
                 })
                 .then(() => {
-                    latestValueSent.innerHTML = value;
-                    console.log("Value written to LEDcharacteristic:", value);
+                   
+                    console.log("Setup sent");
                 })
                 .catch(error => {
-                    console.error("Error writing to the LED characteristic: ", error);
+                    console.error("Error writing to the setup characteristic: ", error);
                 });
         } else {
             console.error("Bluetooth is not connected. Cannot write to characteristic.")
