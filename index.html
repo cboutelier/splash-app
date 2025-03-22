@@ -34,12 +34,12 @@
         </div>
         <div class="card-grid">
             
-            <div class="card">
+            <div class="card" id="test_card">
                 <h2>Test 2</h2>
                 <button id="testCamera" class="onButton">Camera</button>
                 <button id="testFlash" class="offButton">Flash</button>
             </div>
-            <div class="card">
+            <div class="card" id="setup_card">
                 <h2>Setup</h2>
                 <p class="reading">Height: <input id="heightId"></input>mm</p>
                 <p class="reading">Offset: <input id="offsetId"></input>ms</p>
@@ -243,6 +243,8 @@
             } else {
                 console.log("No characteristic found to disconnect.");
             }
+            document.getElementById('test_card').style.display = 'none';
+            document.getElementById('setup_card').style.display = 'none';
         } else {
             // Throw an error if Bluetooth is not connected
             console.error("Bluetooth is not connected.");
