@@ -13,6 +13,7 @@ h1 {
 }
 body {
     margin: 0;
+    background-color:silver;
 }
 .content {
     padding: 50px;
@@ -60,5 +61,5 @@ button {
 }
 
 .reading {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
 }
