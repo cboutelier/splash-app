@@ -170,7 +170,7 @@
         if (bleServer && bleServer.connected) {
             bleServiceFound.getCharacteristic(testCommandCharacteristic)
                 .then(characteristic => {
-                    console.log("Found the test command characteristic: ", characteristic.uuid);
+                    console.log("Found the test command characteristic: ", characteristic.uuid, value);
                     const data = new Uint8Array(value,2);
                     return characteristic.writeValue(data);
                 })
