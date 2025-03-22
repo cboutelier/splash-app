@@ -168,8 +168,8 @@
     function handleSetupCharacteristicChange(event) {
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
-        height = newValueReceived.substring(0, newValueReceived.indexOf("#"));
-        offset = newValueReceived.substring(newValueReceived.indexOf("#")+1);
+        height.value = newValueReceived.substring(0, newValueReceived.indexOf("#"));
+        offset.value = newValueReceived.substring(newValueReceived.indexOf("#")+1);
          
     }
 
