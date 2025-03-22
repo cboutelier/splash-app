@@ -33,26 +33,18 @@
             </div>
         </div>
         <div class="card-grid">
+            
             <div class="card">
-                <h2>Fetched Value</h2>
-                <p class="reading"><span id="valueContainer">NaN</span></p>
-                <p class="gray-label">Last reading: <span id="timestamp"></span></p>
-            </div>
-
-            <div class="card">
-                <h2>Control GPIO 2</h2>
-                <button id="onButton" class="onButton">ON</button>
-                <button id="offButton" class="offButton">OFF</button>
-                <p class="gray-label">Last value sent: <span id="valueSent"></span></p>
+                <h2>Test</h2>
+                <button id="testCamera" class="onButton">Camera</button>
+                <button id="testFlash" class="offButton">Flash</button>
             </div>
             <div class="card">
                 <h2>Setup</h2>
                 <p class="reading">Height: <input id="heightId"></input>mm</p>
                 <p class="reading">Offset: <input id="offsetId"></input>ms</p>
                 <button id="submitSetup" class="onButton">Submit</button>
-
-            </div>
-
+           </div>
         </div>
     </div>
     <div class="footer">
@@ -63,9 +55,9 @@
     // DOM Elements
     const connectButton = document.getElementById('connectBleButton');
     const disconnectButton = document.getElementById('disconnectBleButton');
-    const onButton = document.getElementById('onButton');
-    const offButton = document.getElementById('offButton');
-    const retrievedValue = document.getElementById('valueContainer');
+    const testCamera = document.getElementById('testCamera');
+    const testFlash = document.getElementById('testFlash');
+    
     const latestValueSent = document.getElementById('valueSent');
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
@@ -101,8 +93,8 @@
     disconnectButton.addEventListener('click', disconnectDevice);
 
     // Write to the ESP32 LED Characteristic
-    //onButton.addEventListener('click', () => writeOnCharacteristic(1));
-    //offButton.addEventListener('click', () => writeOnCharacteristic(0));
+    onTestCamera.addEventListener('click', () => writeOnCharacteristic('01'));
+    onTestFlash.addEventListener('click', () => writeOnCharacteristic('10'));
     onSubmitSetupButton.addEventListener('click', () => sendSetup());
 
     // Check if BLE is available in your Browser
@@ -176,18 +168,15 @@
 
     function writeOnCharacteristic(value) {
         if (bleServer && bleServer.connected) {
-            bleServiceFound.getCharacteristic(ledCharacteristic)
+            bleServiceFound.getCharacteristic(testCommandCharacteristic)
                 .then(characteristic => {
-                    console.log("Found the LED characteristic: ", characteristic.uuid);
+                    console.log("Found the test command characteristic: ", characteristic.uuid);
                     const data = new Uint8Array([value]);
                     return characteristic.writeValue(data);
                 })
-                .then(() => {
-                    latestValueSent.innerHTML = value;
-                    console.log("Value written to LEDcharacteristic:", value);
-                })
+                
                 .catch(error => {
-                    console.error("Error writing to the LED characteristic: ", error);
+                    console.error("Error writing to the Test command characteristic: ", error);
                 });
         } else {
             console.error("Bluetooth is not connected. Cannot write to characteristic.")
@@ -196,27 +185,27 @@
     }
 
     function sendSetup() {
-        console.log(" Sending setup: ", height.value,'#',offset.value);
+        console.log(" Sending setup: ", height.value, '#', offset.value);
         const encoder = new TextEncoder();
-        var parameters = height.value+'#'+offset.value;
-       
+        var parameters = height.value + '#' + offset.value;
+
 
         const buffer = new ArrayBuffer(parameters.length);
-    const view = new Uint8Array(buffer);
-    for (let i = 0; i < parameters.length; i++) {
-        view[i] = parameters.charCodeAt(i);
-    }
-        
+        const view = new Uint8Array(buffer);
+        for (let i = 0; i < parameters.length; i++) {
+            view[i] = parameters.charCodeAt(i);
+        }
+
 
         if (bleServer && bleServer.connected) {
             bleServiceFound.getCharacteristic(setupCharacteristic)
                 .then(characteristic => {
                     console.log("Found the Setup characteristic: ", characteristic.uuid);
-                    
+
                     return characteristic.writeValue(buffer);
                 })
                 .then(() => {
-                   
+
                     console.log("Setup sent");
                 })
                 .catch(error => {
