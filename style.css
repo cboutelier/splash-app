@@ -13,7 +13,7 @@ h1 {
 }
 body {
     margin: 0;
-    background-color:silver;
+    background-color: #a5abb3;
 }
 .content {
     padding: 50px;
@@ -27,7 +27,7 @@ body {
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 }
 .card {
-    background-color: white;
+    background-color: #86919e;
     box-shadow: 2px 2px 12px 1px rgba(140,140,140,.5);
 }
 button {
