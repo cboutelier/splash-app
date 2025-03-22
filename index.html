@@ -33,9 +33,9 @@
             </div>
         </div>
         <div class="card-grid">
-            
-            <div class="card" id="test_card">
-                <h2>Test 3</h2>
+
+            <div class="card" id="test_card" style="display:none">
+                <h2>Test 4</h2>
                 <button id="testCamera" class="onButton">Camera</button>
                 <button id="testFlash" class="offButton">Flash</button>
             </div>
@@ -44,7 +44,7 @@
                 <p class="reading">Height: <input id="heightId"></input>mm</p>
                 <p class="reading">Offset: <input id="offsetId"></input>ms</p>
                 <button id="submitSetup" class="onButton">Submit</button>
-           </div>
+            </div>
         </div>
     </div>
     <div class="footer">
@@ -57,7 +57,7 @@
     const disconnectButton = document.getElementById('disconnectBleButton');
     const testCamera = document.getElementById('testCamera');
     const testFlash = document.getElementById('testFlash');
-    
+
     const latestValueSent = document.getElementById('valueSent');
     const bleStateContainer = document.getElementById('bleState');
     const timestampContainer = document.getElementById('timestamp');
@@ -145,6 +145,9 @@
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
                 retrievedValue.innerHTML = decodedValue;
+            }).then(() => {
+                document.getElementById('test_card').style.display = 'flex';
+                document.getElementById('setup_card').style.display = 'flex';
             })
             .catch(error => {
                 console.log('Error: ', error);
@@ -172,14 +175,14 @@
                 .then(characteristic => {
                     console.log("Found the test command characteristic: ", characteristic.uuid, value);
                     const encoder = new TextEncoder();
-                    var  data = new Uint8Array([0,1]);
-                    if( value == '10'){
-                        data = new Uint8Array([1,0]);
+                    var data = new Uint8Array([0, 1]);
+                    if (value == '10') {
+                        data = new Uint8Array([1, 0]);
                     }
-                    
+
                     return characteristic.writeValue(data);
                 })
-                
+
                 .catch(error => {
                     console.error("Error writing to the Test command characteristic: ", error);
                 });
