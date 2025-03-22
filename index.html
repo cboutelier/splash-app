@@ -172,7 +172,10 @@
                 .then(characteristic => {
                     console.log("Found the test command characteristic: ", characteristic.uuid, value);
                     const encoder = new TextEncoder();
-                    const data = encoder.encode(value);
+                    var  data = Uint8Array([0,1]);
+                    if( value == '10'){
+                        data = Uint8Array([1,0]);
+                    }
                     
                     return characteristic.writeValue(data);
                 })
