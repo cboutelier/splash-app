@@ -130,23 +130,24 @@
             .then(service => {
                 bleServiceFound = service;
                 console.log("Service discovered:", service.uuid);
-                return service.getCharacteristic(sensorCharacteristic);
+                return service.getCharacteristic(setupCharacteristic);
             })
-         /*   .then(characteristic => {
-                console.log("Characteristic discovered:", characteristic.uuid);
-                sensorCharacteristicFound = characteristic;
-                characteristic.addEventListener('characteristicvaluechanged', handleCharacteristicChange);
+            .then(characteristic => {
+                console.log("Setup characteristic discovered:", characteristic.uuid);
+                //sensorCharacteristicFound = characteristic;
+                characteristic.addEventListener('characteristicvaluechanged', handleSetupCharacteristicChange);
                 characteristic.startNotifications();
                 console.log("Notifications Started.");
                 return characteristic.readValue();
             })
+         
             .then(value => {
                 console.log("Read value: ", value);
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
-                retrievedValue.innerHTML = decodedValue;
+               //retrievedValue.innerHTML = decodedValue;
             })
-            */    
+               
             .then(() => {
                 document.getElementById('test_card').style.display = 'block';
                 document.getElementById('setup_card').style.display = 'block';
@@ -164,11 +165,10 @@
         connectToDevice();
     }
 
-    function handleCharacteristicChange(event) {
+    function handleSetupCharacteristicChange(event) {
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
-        retrievedValue.innerHTML = newValueReceived;
-        timestampContainer.innerHTML = getDateTime();
+         
     }
 
     function writeOnCharacteristic(value) {
