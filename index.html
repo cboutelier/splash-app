@@ -171,7 +171,7 @@
             bleServiceFound.getCharacteristic(testCommandCharacteristic)
                 .then(characteristic => {
                     console.log("Found the test command characteristic: ", characteristic.uuid, value);
-                    const data = new Uint8Array(value,2);
+                    const data = new Uint8Array(value,0,2);
                     return characteristic.writeValue(data);
                 })
                 
