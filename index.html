@@ -197,6 +197,27 @@
 
     function sendSetup() {
         console.log(" Sending setup: ", height.value,'#',offset.value);
+        
+        var parameters = height.value+'#'+offset.value;
+
+        if (bleServer && bleServer.connected) {
+            bleServiceFound.getCharacteristic(setupCharacteristic)
+                .then(characteristic => {
+                    console.log("Found the Setup characteristic: ", characteristic.uuid);
+                    
+                    return characteristic.writeValue(parameters);
+                })
+                .then(() => {
+                    latestValueSent.innerHTML = value;
+                    console.log("Value written to LEDcharacteristic:", value);
+                })
+                .catch(error => {
+                    console.error("Error writing to the LED characteristic: ", error);
+                });
+        } else {
+            console.error("Bluetooth is not connected. Cannot write to characteristic.")
+            window.alert("Bluetooth is not connected. Cannot write to characteristic. \n Connect to BLE first!")
+        }
     }
 
     function disconnectDevice() {
