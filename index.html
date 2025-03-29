@@ -21,7 +21,7 @@
     <div class="topnav">
         <h1>Splash!</h1>
     </div>
-    <div style="font-size: 0.5rem;"> version: 14.53 </div>
+    <div style="font-size: 0.5rem;"> version: 14.54 </div>
     <div id="log" style="font-size: 0.5rem; text-align: left;"></div>
     <div class="content">
 
@@ -168,6 +168,7 @@
     function handleSetupCharacteristicChange(event) {
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
+        logContent.innerHTML = "Received " + newValueReceived;
         height.value = newValueReceived.substring(0, newValueReceived.indexOf("#"));
         offset.value = newValueReceived.substring(newValueReceived.indexOf("#") + 1);
 
