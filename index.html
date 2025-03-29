@@ -21,7 +21,7 @@
     <div class="topnav">
         <h1>Splash!</h1>
     </div>
-    <div style="font-size: 0.5rem;"> version: 14.5</div>
+    <div style="font-size: 0.5rem;"> version: 14.51 </div>
     <div id="log" style="font-size: 0.5rem; text-align: left;"></div>
     <div class="content">
 
@@ -151,24 +151,18 @@
                 logContent.innerHTML = logContent.innerHTML + "<br/>" + decodedValue;
 
             })
-
-            /*  .then(() => {
-                  document.getElementById('test_card').style.display = 'block';
-                  document.getElementById('setup_card').style.display = 'block';
-              })
-                  */
             .catch(error => {
                 console.log('Error: ', error);
             })
     }
 
     function onDisconnected(event) {
-     /*   console.log('Device Disconnected:', event.target.device.name);
+        console.log('Device Disconnected:', event.target.device.name);
         bleStateContainer.innerHTML = "Device disconnected";
         bleStateContainer.style.color = "#d13a30";
 
-        connectToDevice();
-        */
+        //connectToDevice();
+
     }
 
     function handleSetupCharacteristicChange(event) {
@@ -238,14 +232,7 @@
     function disconnectDevice() {
         console.log("Disconnect Device.");
         if (bleServer && bleServer.connected) {
-
-            bleServer.disconnect()
-                .then(() => {
-                    console.log("Device Disconnected");
-                    bleStateContainer.innerHTML = "Device Disconnected";
-                    bleStateContainer.style.color = "#d13a30";
-                });
-
+            bleServer.disconnect();
         } else {
             // Throw an error if Bluetooth is not connected
             console.error("Bluetooth is not connected.");
