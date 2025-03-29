@@ -21,7 +21,7 @@
     <div class="topnav">
         <h1>Splash!</h1>
     </div>
-    <div style="font-size: 0.5rem;"> version: 14</div>
+    <div style="font-size: 0.5rem;"> version: 14.1</div>
     <div id="log" style="font-size: 0.5rem"></div>
     <div class="content">
         
@@ -140,6 +140,7 @@
                 characteristic.addEventListener('characteristicvaluechanged', handleSetupCharacteristicChange);
                 characteristic.startNotifications();
                 console.log("Notifications Started.");
+                logContent.innerHTML="notifications started";
                 return characteristic.readValue();
             })
 
@@ -147,7 +148,7 @@
                 console.log("Read value: ", value);
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
-                logContent.innerHTML=decodedValue;
+                logContent.innerHTML= logContent.innerHTML + "\br" + decodedValue;
 
             })
 
