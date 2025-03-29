@@ -22,6 +22,7 @@
         <h1>Splash!</h1>
     </div>
     <div style="font-size: 0.5rem;"> version: 12</div>
+    <div id="log" style="font-size: 0.5rem"></div>
     <div class="content">
         
         <div class="card-grid">
@@ -68,6 +69,8 @@
 
     const height = document.getElementById('heightId');
     const offset = document.getElementById('offsetId');
+
+    const logContent = document.getElementById('log');
 
     //Define BLE Device Specs
     var deviceName = 'SPLASH';
@@ -144,6 +147,7 @@
                 console.log("Read value: ", value);
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
+                logContent.innerHTML=decodedValue;
 
             })
 
