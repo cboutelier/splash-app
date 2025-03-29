@@ -19,7 +19,7 @@
 
 <body>
     <div class="topnav">
-        <h1>Splash! 11</h1>
+        <h1>Splash! (12)</h1>
     </div>
     <div class="content">
         <div class="card-grid">
@@ -34,12 +34,12 @@
         </div>
         <div class="card-grid">
 
-            <div class="card" id="test_card" style="display:none">
+            <div class="card" id="test_card">
                 <h2>Test</h2>
                 <button id="testCamera" class="onButton">Camera</button>
                 <button id="testFlash" class="offButton">Flash</button>
             </div>
-            <div class="card" id="setup_card" style="display:none">
+            <div class="card" id="setup_card">
                 <h2>Setup</h2>
                 <p class="reading">Height: <input id="heightId"></input>mm</p>
                 <p class="reading">Offset: <input id="offsetId"></input>ms</p>
@@ -70,8 +70,6 @@
     //Define BLE Device Specs
     var deviceName = 'SPLASH';
     var bleService = '5d898c34-12aa-4af5-8adc-0b105f04b528';
-    var sensorCharacteristic = 'db8d3ab6-9cdb-4159-aac6-ab155aabaa71';
-    var ledCharacteristic = '4add5085-9905-4a7b-8800-032e7db97f32';
 
     var testCommandCharacteristic = '4efed56f-8df2-4153-abf2-9aa6c2295752';
     var setupCharacteristic = 'da5d71ce-ece4-4321-9798-1fa3a5614860';
@@ -80,7 +78,7 @@
     //Global Variables to Handle Bluetooth
     var bleServer;
     var bleServiceFound;
-    var sensorCharacteristicFound;
+
 
     // Connect Button (search for BLE Devices only if BLE is available)
     connectButton.addEventListener('click', (event) => {
@@ -134,24 +132,24 @@
             })
             .then(characteristic => {
                 console.log("Setup characteristic discovered:", characteristic.uuid);
-                //sensorCharacteristicFound = characteristic;
                 characteristic.addEventListener('characteristicvaluechanged', handleSetupCharacteristicChange);
                 characteristic.startNotifications();
                 console.log("Notifications Started.");
                 return characteristic.readValue();
             })
-         
+
             .then(value => {
                 console.log("Read value: ", value);
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
-               //retrievedValue.innerHTML = decodedValue;
+
             })
-               
-            .then(() => {
-                document.getElementById('test_card').style.display = 'block';
-                document.getElementById('setup_card').style.display = 'block';
-            })
+
+            /*  .then(() => {
+                  document.getElementById('test_card').style.display = 'block';
+                  document.getElementById('setup_card').style.display = 'block';
+              })
+                  */
             .catch(error => {
                 console.log('Error: ', error);
             })
@@ -169,8 +167,8 @@
         const newValueReceived = new TextDecoder().decode(event.target.value);
         console.log("Characteristic value changed: ", newValueReceived);
         height.value = newValueReceived.substring(0, newValueReceived.indexOf("#"));
-        offset.value = newValueReceived.substring(newValueReceived.indexOf("#")+1);
-         
+        offset.value = newValueReceived.substring(newValueReceived.indexOf("#") + 1);
+
     }
 
     function writeOnCharacteristic(value) {

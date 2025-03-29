@@ -41,8 +41,6 @@ static TaskHandle_t task_sensor_triggered;
 portMUX_TYPE mutex = portMUX_INITIALIZER_UNLOCKED;
 
 #define SERVICE_UUID "5d898c34-12aa-4af5-8adc-0b105f04b528"
-#define SENSOR_CHARACTERISTIC_UUID "db8d3ab6-9cdb-4159-aac6-ab155aabaa71"
-#define LED_CHARACTERISTIC_UUID "4add5085-9905-4a7b-8800-032e7db97f32"
 #define TEST_COMMANDS_UUID "4efed56f-8df2-4153-abf2-9aa6c2295752"
 #define SETUP_UUID "da5d71ce-ece4-4321-9798-1fa3a5614860"
 
@@ -138,31 +136,6 @@ class MyServerCallbacks : public BLEServerCallbacks
   }
 };
 
-class MyCharacteristicCallbacks : public BLECharacteristicCallbacks
-{
-  void onWrite(BLECharacteristic *pLedCharacteristic, esp_ble_gatts_cb_param_t *param)
-  {
-
-    std::string value = pLedCharacteristic->getValue();
-    if (value.length() > 0)
-    {
-      Serial.print("Characteristic event, written: ");
-      Serial.println(static_cast<int>(value[0])); // Print the integer value
-
-      int receivedValue = static_cast<int>(value[0]);
-      if (receivedValue == 1)
-      {
-        digitalWrite(ledPin, HIGH);
-        xTaskNotify(task_flash_fire, 0, eSetValueWithOverwrite);
-      }
-      else
-      {
-        digitalWrite(ledPin, LOW);
-      }
-    }
-  }
-};
-
 class TestCharacteristicCallbacks : public BLECharacteristicCallbacks
 {
   void onWrite(BLECharacteristic *pTestCommandCharacteristic, esp_ble_gatts_cb_param_t *param)
@@ -202,7 +175,7 @@ class SetupCharacteristicCallbacks : public BLECharacteristicCallbacks
     Serial.println(String("Submitted Height:") + String(submittedHeight.c_str()));
     Serial.println(String("Submitted offset:") + String(submittedOffset.c_str()));
 
-    height = std::stod(submittedHeight)/1000;
+    height = std::stod(submittedHeight) / 1000;
     offset = std::stoi(submittedOffset);
 
     preferences.begin("splash", false);
@@ -252,19 +225,6 @@ void setup()
   // Create the BLE Service
   BLEService *pService = pServer->createService(SERVICE_UUID);
 
-  // Create a BLE Characteristic
-  pSensorCharacteristic = pService->createCharacteristic(
-      SENSOR_CHARACTERISTIC_UUID,
-      BLECharacteristic::PROPERTY_READ |
-          BLECharacteristic::PROPERTY_WRITE |
-          BLECharacteristic::PROPERTY_NOTIFY |
-          BLECharacteristic::PROPERTY_INDICATE);
-
-  // Create the ON button Characteristic
-  pLedCharacteristic = pService->createCharacteristic(
-      LED_CHARACTERISTIC_UUID,
-      BLECharacteristic::PROPERTY_WRITE);
-
   // Create the test characteristic
   pTestCommandCharacteristic = pService->createCharacteristic(
       TEST_COMMANDS_UUID,
@@ -276,9 +236,6 @@ void setup()
                                                                    BLECharacteristic::PROPERTY_WRITE |
                                                                    BLECharacteristic::PROPERTY_NOTIFY |
                                                                    BLECharacteristic::PROPERTY_INDICATE);
-
-  // Register the callback for the ON button characteristic
-  pLedCharacteristic->setCallbacks(new MyCharacteristicCallbacks());
 
   pTestCommandCharacteristic->setCallbacks(new TestCharacteristicCallbacks());
 
@@ -335,11 +292,11 @@ void loop()
   // notify changed value
   if (deviceConnected)
   {
-   /* String currentValues = String(height * 1000) + "#" + String(offset);
-    pSetupCommandCharacteristic->setValue(currentValues.c_str());
-    pSetupCommandCharacteristic->notify();
-    delay(1000);
-    */
+    /* String currentValues = String(height * 1000) + "#" + String(offset);
+     pSetupCommandCharacteristic->setValue(currentValues.c_str());
+     pSetupCommandCharacteristic->notify();
+     delay(1000);
+     */
     /*pSensorCharacteristic->setValue(String(value).c_str());
      pSensorCharacteristic->notify();
      value++;
