@@ -21,7 +21,7 @@
     <div class="topnav">
         <h1>Splash!</h1>
     </div>
-    <div style="font-size: 0.5rem;"> version: 14.51 </div>
+    <div style="font-size: 0.5rem;"> version: 14.52 </div>
     <div id="log" style="font-size: 0.5rem; text-align: left;"></div>
     <div class="content">
 
@@ -232,7 +232,10 @@
     function disconnectDevice() {
         console.log("Disconnect Device.");
         if (bleServer && bleServer.connected) {
+            
             bleServer.disconnect();
+            bleStateContainer.innerHTML = "Device disconnected";
+            bleStateContainer.style.color = "#d13a30";
         } else {
             // Throw an error if Bluetooth is not connected
             console.error("Bluetooth is not connected.");
