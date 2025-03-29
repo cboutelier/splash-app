@@ -21,8 +21,8 @@
     <div class="topnav">
         <h1>Splash!</h1>
     </div>
-    <div style="font-size: 0.5rem;"> version: 14.1</div>
-    <div id="log" style="font-size: 0.5rem"></div>
+    <div style="font-size: 0.5rem;"> version: 14.2</div>
+    <div id="log" style="font-size: 0.5rem; text-align: left;"></div>
     <div class="content">
         
         <div class="card-grid">
@@ -148,7 +148,7 @@
                 console.log("Read value: ", value);
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
-                logContent.innerHTML= logContent.innerHTML + "\br" + decodedValue;
+                logContent.innerHTML= logContent.innerHTML + "<br/>" + decodedValue;
 
             })
 
