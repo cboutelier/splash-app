@@ -21,7 +21,7 @@
     <div class="topnav">
         <h1>Splash!</h1>
     </div>
-    <div style="font-size: 0.5rem;"> version: 14.3</div>
+    <div style="font-size: 0.5rem;"> version: 14.4</div>
     <div id="log" style="font-size: 0.5rem; text-align: left;"></div>
     <div class="content">
 
@@ -238,7 +238,7 @@
         console.log("Disconnect Device.");
         if (bleServer && bleServer.connected) {
 
-            bleServer.disconnect()
+            return bleServer.disconnect()
                 .then(() => {
                     console.log("Device Disconnected");
                     bleStateContainer.innerHTML = "Device Disconnected";
