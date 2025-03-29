@@ -24,7 +24,7 @@
     <div style="font-size: 0.5rem;"> version: 14.2</div>
     <div id="log" style="font-size: 0.5rem; text-align: left;"></div>
     <div class="content">
-        
+
         <div class="card-grid">
             <div class="card">
                 <p>
@@ -140,7 +140,7 @@
                 characteristic.addEventListener('characteristicvaluechanged', handleSetupCharacteristicChange);
                 characteristic.startNotifications();
                 console.log("Notifications Started.");
-                logContent.innerHTML="notifications started";
+                logContent.innerHTML = "notifications started";
                 return characteristic.readValue();
             })
 
@@ -148,7 +148,7 @@
                 console.log("Read value: ", value);
                 const decodedValue = new TextDecoder().decode(value);
                 console.log("Decoded value: ", decodedValue);
-                logContent.innerHTML= logContent.innerHTML + "<br/>" + decodedValue;
+                logContent.innerHTML = logContent.innerHTML + "<br/>" + decodedValue;
 
             })
 
@@ -237,10 +237,13 @@
     function disconnectDevice() {
         console.log("Disconnect Device.");
         if (bleServer && bleServer.connected) {
-            console.log("Device Disconnected");
-            bleStateContainer.innerHTML = "Device Disconnected";
-            bleStateContainer.style.color = "#d13a30";
 
+            bleServer.disconnect()
+                .then(() => {
+                    console.log("Device Disconnected");
+                    bleStateContainer.innerHTML = "Device Disconnected";
+                    bleStateContainer.style.color = "#d13a30";
+                });
 
         } else {
             // Throw an error if Bluetooth is not connected
