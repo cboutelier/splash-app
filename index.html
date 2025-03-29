@@ -19,9 +19,11 @@
 
 <body>
     <div class="topnav">
-        <h1>Splash! (12)</h1>
+        <h1>Splash!</h1>
     </div>
+    
     <div class="content">
+        <span>version: 12</span>
         <div class="card-grid">
             <div class="card">
                 <p>
@@ -230,26 +232,11 @@
     function disconnectDevice() {
         console.log("Disconnect Device.");
         if (bleServer && bleServer.connected) {
-            if (sensorCharacteristicFound) {
-                sensorCharacteristicFound.stopNotifications()
-                    .then(() => {
-                        console.log("Notifications Stopped");
-                        return bleServer.disconnect();
-                    })
-                    .then(() => {
-                        console.log("Device Disconnected");
-                        bleStateContainer.innerHTML = "Device Disconnected";
-                        bleStateContainer.style.color = "#d13a30";
+            console.log("Device Disconnected");
+            bleStateContainer.innerHTML = "Device Disconnected";
+            bleStateContainer.style.color = "#d13a30";
 
-                    })
-                    .catch(error => {
-                        console.log("An error occurred:", error);
-                    });
-            } else {
-                console.log("No characteristic found to disconnect.");
-            }
-           // document.getElementById('test_card').style.display = 'none';
-           // document.getElementById('setup_card').style.display = 'none';
+
         } else {
             // Throw an error if Bluetooth is not connected
             console.error("Bluetooth is not connected.");
