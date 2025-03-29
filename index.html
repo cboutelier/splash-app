@@ -21,7 +21,7 @@
     <div class="topnav">
         <h1>Splash!</h1>
     </div>
-    <div style="font-size: 0.5rem;"> version: 14.52 </div>
+    <div style="font-size: 0.5rem;"> version: 14.53 </div>
     <div id="log" style="font-size: 0.5rem; text-align: left;"></div>
     <div class="content">
 
@@ -137,9 +137,9 @@
             })
             .then(characteristic => {
                 console.log("Setup characteristic discovered:", characteristic.uuid);
-                characteristic.addEventListener('characteristicvaluechanged', handleSetupCharacteristicChange);
                 characteristic.startNotifications();
-                console.log("Notifications Started.");
+                characteristic.addEventListener('characteristicvaluechanged', handleSetupCharacteristicChange);
+               
                 logContent.innerHTML = "notifications started";
                 return characteristic.readValue();
             })
