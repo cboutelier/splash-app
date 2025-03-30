@@ -29,6 +29,8 @@ uint flashDelay = 480;
 float height = 1.440;
 int offset = -150;
 
+long connectTimestamp = 0;
+
 #define COLOR_ORDER GRB
 #define CHIPSET WS2811
 #define NUM_LEDS 1
@@ -122,10 +124,12 @@ class MyServerCallbacks : public BLEServerCallbacks
     deviceConnected = true;
     leds[0] = CRGB::Blue;
     FastLED.show();
+    connectTimestamp = millis();
 
-    String currentValues = String(height * 1000) + "#" + String(offset);
+    /*String currentValues = String(height * 1000) + "#" + String(offset);
     pSetupCommandCharacteristic->setValue(currentValues.c_str());
     pSetupCommandCharacteristic->notify();
+    Serial.println("Notified");*/
   };
 
   void onDisconnect(BLEServer *pServer)
@@ -243,8 +247,7 @@ void setup()
 
   // https://www.bluetooth.com/specifications/gatt/viewer?attributeXmlFile=org.bluetooth.descriptor.gatt.client_characteristic_configuration.xml
   // Create a BLE Descriptor
-  pSensorCharacteristic->addDescriptor(new BLE2902());
-  pLedCharacteristic->addDescriptor(new BLE2902());
+
   pTestCommandCharacteristic->addDescriptor(new BLE2902());
   pSetupCommandCharacteristic->addDescriptor(new BLE2902());
   // Start the service
@@ -292,19 +295,14 @@ void loop()
   // notify changed value
   if (deviceConnected)
   {
-    /* String currentValues = String(height * 1000) + "#" + String(offset);
-     pSetupCommandCharacteristic->setValue(currentValues.c_str());
-     pSetupCommandCharacteristic->notify();
-     delay(1000);
-     */
-    /*pSensorCharacteristic->setValue(String(value).c_str());
-     pSensorCharacteristic->notify();
-     value++;
-     Serial.print("New value notified: ");
-     Serial.println(value);
-
-     delay(3000); // bluetooth stack will go into congestion, if too many packets are sent, in 6 hours test i was able to go as low as 3ms
-   */
+    if (connectTimestamp != 0 && connectTimestamp + 1000 < millis())
+    {
+      String currentValues = String(height * 1000) + "#" + String(offset);
+      pSetupCommandCharacteristic->setValue(currentValues.c_str());
+      pSetupCommandCharacteristic->notify();
+      connectTimestamp = 0;
+      delay(1000);
+    }
   }
   // disconnecting
   if (!deviceConnected && oldDeviceConnected)
